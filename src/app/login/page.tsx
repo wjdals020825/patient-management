@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginUserWithEmail, HospitalUser } from '@/firebase/userService';
+import { loginUserWithEmail, HospitalUser } from '../../firebase/userService';
 import Link from 'next/link';
 
 export default function LoginPage() {

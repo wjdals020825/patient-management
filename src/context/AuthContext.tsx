@@ -2,10 +2,10 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { auth } from '@/firebase/config';
-import { HospitalUser } from '@/firebase/userService';
+import { auth } from '../firebase/config';
+import { HospitalUser } from '../firebase/userService';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase/config';
+import { db } from '../firebase/config';
 
 interface AuthContextType {
   user: HospitalUser | null;

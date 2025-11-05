@@ -12,6 +12,7 @@ export interface HospitalUser {
   email: string;
   name: string;
   hospitalName: string;
+  hospitalId: string;
 }
 
 // 병원 리스트 타입
@@ -32,7 +33,7 @@ export const registerUserWithEmail = async (
   const hospitalId: string = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
 
   // hospitalUser 저장
-  const userData: HospitalUser = { uid, email, name, hospitalName };
+  const userData: HospitalUser = { uid, email, name, hospitalName,hospitalId};
   await setDoc(doc(db, 'hospitalUser', uid), userData);
 
   // hospitalList 저장

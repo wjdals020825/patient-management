@@ -1,5 +1,5 @@
 'use client';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '../context/AuthContext';
 import './globals.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ReactNode, useEffect } from 'react';
