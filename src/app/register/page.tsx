@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { registerUserWithEmail } from '@/firebase/userService';
+import { registerUserWithEmail } from '../../firebase/userService';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState<string>('');

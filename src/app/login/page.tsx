@@ -32,7 +32,7 @@ export default function LoginPage() {
       alert(`환영합니다, ${user.name}님!`);
       setEmail('');
       setPassword('');
-      router.push('/dashboard');
+      await router.push('/dashboard')
     } else {
       // 로그인 실패 시 input 초기화
       setEmail('');

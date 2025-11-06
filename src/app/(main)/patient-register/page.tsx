@@ -6,8 +6,8 @@ import { Button, Card, Table, Spinner, Pagination } from "react-bootstrap";
 import { saveAs } from "file-saver";
 import { v4 as uuidv4 } from "uuid";
 import { collection, addDoc, getDocs, query, where, orderBy, limit, startAfter } from "firebase/firestore";
-import { db } from "../../firebase/config";
-import { useAuth } from "../../context/AuthContext"; // ✅ 로그인 정보 사용 (hospitalId 포함)
+import { db } from "../../../firebase/config";
+import { useAuth } from "../../../context/AuthContext"; // ✅ 로그인 정보 사용 (hospitalId 포함)
 
 interface Patient {
   id: string;
@@ -20,6 +20,7 @@ interface Patient {
   firstVisit: string;
   hospitalId: string;
   createdAt: Date;
+  age?: string;
 }
 
 export default function PatientRegisterPage() {
@@ -201,7 +202,7 @@ export default function PatientRegisterPage() {
       {/* ✅ 리스트 영역 */}
       <Card className="p-3 shadow-sm">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h5 className="fw-semibold">📋 내 병원 환자 목록</h5>
+          <h5 className="fw-semibold">📋 환자 목록</h5>
           <Button
             variant="outline-secondary"
             size="sm"
@@ -220,22 +221,40 @@ export default function PatientRegisterPage() {
                 <th>차트번호</th>
                 <th>이름</th>
                 <th>생년월일</th>
+                <th>나이</th>
                 <th>성별</th>
                 <th>전화번호</th>
                 <th>초진일자</th>
               </tr>
             </thead>
             <tbody>
-              {patients.map((p) => (
-                <tr key={p.id} className="text-center">
-                  <td>{p.chartNo}</td>
-                  <td>{p.name}</td>
-                  <td>{p.birth}</td>
-                  <td>{p.gender}</td>
-                  <td>{p.phone}</td>
-                  <td>{p.firstVisit}</td>
-                </tr>
-              ))}
+            {patients.map((p) => {
+    // 생년 2자리만 추출
+    const birthYear = parseInt(p.birth.substring(0, 2), 10);
+
+    // 현재 연도 가져오기
+    const currentYear = new Date().getFullYear();
+
+    // 2000년대인지 1900년대인지 판단
+    const fullYear = birthYear <= Number(String(currentYear).slice(2))
+      ? 2000 + birthYear
+      : 1900 + birthYear;
+
+    // 한국식 나이 (만 나이로 하려면 +1 제거')
+    const age = currentYear - fullYear + 1 +"세";
+
+    return (
+      <tr key={p.id} className="text-center">
+        <td>{p.chartNo}</td>
+        <td>{p.name}</td>
+        <td>{p.birth}</td>
+        <td>{age}</td>
+        <td>{p.gender}</td>
+        <td>{p.phone}</td>
+        <td>{p.firstVisit}</td>
+      </tr>
+    );
+  })}
             </tbody>
           </Table>
         )}

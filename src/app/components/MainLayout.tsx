@@ -1,38 +1,26 @@
 'use client';
-import { useEffect, useState, ReactNode } from 'react';
-import Sidebar from './Sidebar';
-import DashboardPageContent from '../dashboard/DashboardContent';
-import PatientRegisterPage from '../patient-register/page';
-import VisitRecordsPage from '../visit-records/page';
-import SettingsPage from '../settings/page';
 
-export default function MainLayout() {
-  const [activeMenu, setActiveMenu] = useState('dashboard');
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import Sidebar from './Sidebar';
+
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname(); // ✅ 현재 URL 경로 감지
 
   useEffect(() => {
     import('bootstrap/dist/js/bootstrap.bundle.min.js');
   }, []);
 
-  const renderContent = () => {
-    switch (activeMenu) {
-      case 'dashboard':
-        return <DashboardPageContent />;
-      case 'patient-register':
-        return <PatientRegisterPage />;
-      case 'visit-records':
-        return <VisitRecordsPage />;
-      case 'settings':
-        return <SettingsPage />;
-      default:
-        return <DashboardPageContent />;
-    }
-  };
-
   return (
     <div className="d-flex">
-      <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+      {/* ✅ activePath에는 현재 경로를 전달 */}
+      <Sidebar  />
       <div className="flex-grow-1 p-3 bg-light" style={{ minHeight: '100vh' }}>
-        {renderContent()}
+        {children}
       </div>
     </div>
   );
