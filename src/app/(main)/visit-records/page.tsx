@@ -119,15 +119,40 @@ export default function VisitRecordsPage() {
   };
 
   // ✅ 환자 검색
-  const handleSearch = () => {
-    if (!searchTerm.trim()) return setSearchResults([]);
-    const results = patients.filter((p) =>
-      searchType === 'chartNo'
-        ? p.chartNo.toLowerCase().includes(searchTerm.toLowerCase())
-        : p.name.includes(searchTerm)
-    );
+const handleSearch = () => {
+  const trimmed = searchTerm.trim();
+  if (!trimmed) {
+    setSearchResults([]);
+    return;
+  }
+
+  // 차트번호 검색
+  if (searchType === 'chartNo') {
+    // 🔥 입력값에서 숫자만 추출
+    const cleanTerm = trimmed.replace(/\D/g, '');
+    if (!cleanTerm) {
+      setSearchResults([]);
+      return;
+    }
+
+    const results = patients.filter((p) => {
+      const chart = (p.chartNo ?? '').toString();
+      // 혹시라도 DB에 이상한 값 들어갔을 대비해서 숫자만 추출
+      const cleanChart = chart.replace(/\D/g, '');
+      return cleanChart.includes(cleanTerm);
+    });
+
     setSearchResults(results);
-  };
+    return;
+  }
+
+  // 이름 검색
+  const results = patients.filter((p) =>
+    (p.name ?? '').includes(trimmed)
+  );
+  setSearchResults(results);
+};
+const isAddValid = selectedPatient !== null && memo.trim() !== '';
 
   if (loading) return <p className="text-center mt-5">로딩 중...</p>;
 
@@ -224,26 +249,35 @@ export default function VisitRecordsPage() {
             {/* 검색 옵션 */}
             <Form.Group className="mb-3">
               <Form.Label>검색 조건</Form.Label>
-              <Form.Select
-                value={searchType}
-                onChange={(e) => setSearchType(e.target.value as 'chartNo' | 'name')}
-              >
-                <option value="chartNo">차트번호로 검색</option>
-                <option value="name">이름으로 검색</option>
-              </Form.Select>
+            <Form.Select
+  value={searchType}
+  onChange={(e) => {
+    const value = e.target.value as 'chartNo' | 'name';
+    setSearchType(value);
+
+    setSearchTerm('');
+    setSearchResults([]);
+    setSelectedPatient(null);
+  }}
+>
+  
+  <option value="chartNo">차트번호로 검색</option>
+  <option value="name">이름으로 검색</option>
+</Form.Select>
             </Form.Group>
 
             {/* 검색창 */}
             <InputGroup className="mb-3">
               <Form.Control
-                placeholder={
-                  searchType === 'chartNo'
-                    ? '차트번호를 입력하세요'
-                    : '이름을 입력하세요'
-                }
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+    type={searchType === 'chartNo' ? 'number' : 'text'}  // 🔥 여기 추가
+    placeholder={
+      searchType === 'chartNo'
+        ? '차트번호를 입력하세요'
+        : '이름을 입력하세요'
+    }
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
               <Button variant="outline-primary" onClick={handleSearch}>
                 검색
               </Button>
@@ -287,13 +321,18 @@ export default function VisitRecordsPage() {
             </Form.Group>
           </Form>
         </Modal.Body>
+        
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowAddModal(false)}>
             취소
           </Button>
-          <Button variant="primary" onClick={handleAddVisit}>
-            추가하기
-          </Button>
+        <Button
+  variant="primary"
+  onClick={handleAddVisit}
+  disabled={!isAddValid}
+>
+  추가하기
+</Button>
         </Modal.Footer>
       </Modal>
     </div>

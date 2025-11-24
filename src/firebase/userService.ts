@@ -4,7 +4,14 @@ import {
   signInWithEmailAndPassword,
   UserCredential,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, DocumentData } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+  updateProfile
+} from "firebase/auth";
+
 
 // HospitalUser 인터페이스 정의
 export interface HospitalUser {
@@ -26,11 +33,12 @@ export const registerUserWithEmail = async (
   email: string,
   password: string,
   name: string,
+   hospitalId: string,
   hospitalName: string
 ): Promise<string> => {
   const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
   const uid: string = userCredential.user.uid;
-  const hospitalId: string = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+  // const hospitalId: string = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
 
   // hospitalUser 저장
   const userData: HospitalUser = { uid, email, name, hospitalName,hospitalId};
@@ -80,3 +88,33 @@ export const loginUserWithEmail = async (
     return null;
   }
 };
+
+
+
+// 🔐 비밀번호 변경 함수
+export async function updateUserPassword(currentPassword: string, newPassword: string) {
+  if (!auth.currentUser) throw new Error("로그인 정보가 없습니다.");
+
+  const user = auth.currentUser;
+
+  // 1️⃣ 재인증
+  const cred = EmailAuthProvider.credential(user.email!, currentPassword);
+  await reauthenticateWithCredential(user, cred);
+
+  // 2️⃣ 비밀번호 변경
+  await updatePassword(user, newPassword);
+}
+// 🔹 이름 변경 함수
+export async function updateUserName(uid: string, newName: string) {
+  // Firestore users 컬렉션에 저장된 유저 정보 업데이트
+  await updateDoc(doc(db, 'hospitalUser', uid), {
+    name: newName,
+  });
+
+  // 원하면 Firebase Auth 프로필에도 반영 가능 (선택)
+  if (auth.currentUser) {
+ await updateProfile(auth.currentUser!, {
+  displayName: newName,
+});
+  }
+}

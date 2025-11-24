@@ -9,6 +9,7 @@ import { db } from '../firebase/config';
 
 interface AuthContextType {
   user: HospitalUser | null;
+    setUser: React.Dispatch<React.SetStateAction<HospitalUser | null>>;
   logout: () => Promise<void>;
 }
 
@@ -40,7 +41,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
-  return <AuthContext.Provider value={{ user, logout }}>{children}</AuthContext.Provider>;
+  return (
+  <AuthContext.Provider value={{ user, setUser, logout }}>
+    {children}
+  </AuthContext.Provider>
+);
 };
 
 export const useAuth = (): AuthContextType => {
@@ -50,3 +55,4 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+

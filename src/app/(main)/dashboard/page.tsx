@@ -54,9 +54,9 @@ interface Visit {
 
 function formatDateK(date: Date): string {
   return date
-    .toLocaleDateString('ko-KR') // 2025. 11. 16.
+    .toLocaleDateString('ko-KR') 
     .replace(/\. /g, '-')
-    .replace('.', ''); // 2025-11-16
+    .replace('.', ''); 
 }
 
 function getLast7Days(): string[] {
