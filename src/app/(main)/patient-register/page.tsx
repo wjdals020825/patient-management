@@ -69,7 +69,7 @@ const itemsPerPage = 10;
   // ✅ 엑셀 양식 다운로드
   const handleDownloadTemplate = () => {
     const ws = XLSX.utils.json_to_sheet([
-      { 차트번호: "", 이름: "", 주민번호: "000000-0", 전화번호: "", 초진일자: "" },
+      { 차트번호: "", 이름: "", 주민번호: "000000-0", 전화번호: ""},
     ]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "양식");
@@ -106,8 +106,8 @@ const itemsPerPage = 10;
         const rrn = row["주민번호"]?.replace(/[^0-9]/g, "") ?? "";
         const birth = rrn.substring(0, 6);
         const gender = rrn.length >= 7 ? getGender(rrn.charAt(6)) : "알수없음";
-const rawFirstVisit = (row["초진일자"] ?? "").trim(); 
-const firstVisit = rawFirstVisit === "" ? formatDateK(new Date()) : rawFirstVisit;
+
+const firstVisit = formatDateK(new Date()) ;
 
         return {
           id: uuidv4(),
@@ -117,7 +117,7 @@ const firstVisit = rawFirstVisit === "" ? formatDateK(new Date()) : rawFirstVisi
           birth,
           gender,
           phone: row["전화번호"] ?? "",
-          firstVisit: row["초진일자"] ?? firstVisit,
+          firstVisit: firstVisit,
           hospitalId: user?.hospitalId ?? "unknown",
           createdAt: new Date(),
         };
