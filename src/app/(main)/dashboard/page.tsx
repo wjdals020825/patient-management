@@ -208,7 +208,6 @@ export default function DashboardPage() {
     <div className="container mt-4">
       <h2 className="mb-4">대시보드</h2>
 
-      {/* KPI 카드 */}
       <Row className="mb-4 g-3">
         <Col xs={12} md={6} lg={3}>
           <Card className="shadow-sm border-0">

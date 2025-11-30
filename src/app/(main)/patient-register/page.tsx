@@ -7,8 +7,7 @@ import { saveAs } from "file-saver";
 import { v4 as uuidv4 } from "uuid";
 import { collection, addDoc, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "../../../firebase/config";
-import { useAuth } from "../../../context/AuthContext"; // ✅ 로그인 정보 사용 (hospitalId 포함)
-
+import { useAuth } from "../../../context/AuthContext"; 
 interface Patient {
   id: string;
   chartNo: string;
@@ -124,13 +123,13 @@ const firstVisit = formatDateK(new Date()) ;
       });
 
       setPatients(formattedData);
-      setIsPreview(true); // ✅ 업로드 미리보기 모드 켜기
-      setSortKey(null);   // ✅ 미리보기 모드에서는 정렬 상태 초기화
+      setIsPreview(true); 
+      setSortKey(null);  
     };
 
     reader.readAsBinaryString(file);
   };
-// ✅ Firestore 저장 (중복 제거 포함)
+
 const handleSaveToFirestore = async () => {
   if (patients.length === 0) {
     alert("등록할 환자 데이터가 없습니다.");
@@ -157,6 +156,7 @@ const handleSaveToFirestore = async () => {
         where("phone", "==", p.phone)
       );
 
+     
       const dupSnapshot = await getDocs(dupQuery);
 
       if (dupSnapshot.empty) {
@@ -307,16 +307,16 @@ const pageNumbers = useMemo(() => {
     <div className="container mt-5">
       <h2 className="mb-4 fw-bold">환자 등록 및 조회</h2>
 
-      {/* ✅ 업로드 영역 */}
+
       <Card className="p-4 shadow-sm mb-4">
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
           <div>
             <h5>📂 엑셀 업로드</h5>
             <p className="text-muted small mb-2">
-              차트번호 / 이름 / 주민번호(앞6자리+뒤1자리) / 전화번호 / 초진일자
+              차트번호 / 이름 / 주민번호(앞6자리+뒤1자리) / 전화번호 
             </p>
             <input
-              id="excelFile" // ✅ 파일 input에 id 추가
+              id="excelFile" 
               type="file"
               accept=".xlsx, .xls"
               onChange={handleUpload}
